@@ -8,41 +8,35 @@ export default function Header({
   showBack = true,
   backTo = "UserSelect",
   showLogo = false,
-  customBackAction, // Permite ação customizada de voltar
 }) {
   const navigation = useNavigation();
 
   const handleBack = () => {
-    if (customBackAction) {
-      customBackAction(); // Usa ação customizada se fornecida
-    } else if (backTo === "Splashscreen") {
+    if (backTo === "Splashscreen") {
       navigation.navigate("Splashscreen");
     } else if (backTo) {
       navigation.navigate(backTo);
     } else {
-      navigation.goBack(); // Volta para tela anterior por padrão
+      navigation.goBack();
     }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        {/* Espaçador do lado esquerdo */}
+        {/* Lado esquerdo - Botão de voltar ou espaço vazio */}
         <View style={styles.leftSpacer}>
-          {showBack && (
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={handleBack}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              {/* Usando o ícone de seta mais grossa (arrow-back) */}
+          {showBack ? (
+            <TouchableOpacity style={styles.backButton} onPress={handleBack}>
               <Ionicons name="arrow-back" size={28} color={COLORS.primary} />
             </TouchableOpacity>
+          ) : (
+            <View style={styles.backButton} />
           )}
         </View>
 
-        {/* Logo e texto centralizados à direita */}
-        <View style={styles.logoAndText}>
+        {/* Centro - Logo e texto */}
+        <View style={styles.logoContainer}>
           {showLogo ? (
             <Image
               source={require("../../../assets/Brain.png")}
@@ -63,9 +57,9 @@ export default function Header({
           </View>
         </View>
 
-        {/* Espaçador do lado direito para balancear */}
+        {/* Lado direito - Espaçador para simetria */}
         <View style={styles.rightSpacer}>
-          {showBack && <View style={styles.hiddenButton} />}
+          <View style={styles.hiddenButton} />
         </View>
       </View>
     </View>
@@ -77,21 +71,23 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     paddingTop: 50,
     paddingBottom: 16,
-    paddingHorizontal: 8, // Reduzi um pouco o padding horizontal
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.gray200,
   },
   content: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    minHeight: 48, // Altura mínima
+    minHeight: 48,
   },
   leftSpacer: {
-    width: 60, // Largura fixa para alinhamento
+    width: 60,
     alignItems: "flex-start",
     justifyContent: "center",
   },
   rightSpacer: {
-    width: 60, // Largura fixa para simetria
+    width: 60,
     alignItems: "flex-end",
     justifyContent: "center",
   },
@@ -101,19 +97,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 22,
-    backgroundColor: COLORS.gray50, // Fundo sutil
+    backgroundColor: COLORS.gray50,
   },
   hiddenButton: {
     width: 44,
     height: 44,
   },
-  logoAndText: {
+  logoContainer: {
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
     justifyContent: "center",
-    marginLeft: -40, // Move tudo para direita
-    paddingLeft: 40, // Compensa o margin
+    marginLeft: -40,
+    paddingLeft: 40,
   },
   logoImage: {
     width: 48,
@@ -138,19 +134,16 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    justifyContent: "center",
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
     color: COLORS.primary,
     letterSpacing: 0.5,
-    textAlign: "left", // Alinha à esquerda dentro do container
   },
   subtitle: {
     fontSize: 9,
     color: COLORS.gray600,
     marginTop: 2,
-    textAlign: "left", // Alinha à esquerda dentro do container
   },
 });
