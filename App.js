@@ -1,4 +1,5 @@
 import { StatusBar } from "expo-status-bar";
+import React from "react";
 import { PaperProvider } from "react-native-paper";
 import AppNavigator from "./src/navigation/AppNavigator";
 
