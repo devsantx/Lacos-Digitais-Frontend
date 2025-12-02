@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 
 // Screens - Public
-import SplashScreen from "../screens/Splashscreen";
+import SplashScreen from "../screens/Splashscreen"; // Certifique-se que está assim
 import UserSelectScreen from "../screens/UserSelectScreen";
 import ArticlesScreen from "../screens/public/ArticlesScreen";
 import ContactsScreen from "../screens/public/ContactsScreen";

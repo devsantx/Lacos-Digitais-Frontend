@@ -9,12 +9,13 @@ import {
 } from "react-native";
 import { COLORS } from "../constants/colors";
 
-export default function Splashscreen({ navigation }) {
+export default function SplashScreen({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
+    // Animação de entrada
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -28,14 +29,16 @@ export default function Splashscreen({ navigation }) {
       }),
     ]).start();
 
+    // Timer para mostrar o botão
     const timer = setTimeout(() => {
       setIsReady(true);
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [fadeAnim, scaleAnim]);
+  }, []);
 
   const handleStartPress = () => {
+    // Animação de saída
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 0,
@@ -122,10 +125,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     justifyContent: "center",
     alignItems: "center",
-    boxShadowColor: "#000",
-    boxShadowOffset: { width: 0, height: 8 },
-    boxShadowOpacity: 0.3,
-    boxShadowRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
     elevation: 10,
   },
   logoInner: {
