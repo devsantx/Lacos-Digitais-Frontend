@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,96 +12,69 @@ import { COLORS } from "../constants/colors";
 
 export default function SplashScreen({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.8)).current;
+  const translateY = useRef(new Animated.Value(40)).current;
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Animação de entrada
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 1000,
+        duration: 900,
         useNativeDriver: true,
       }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        friction: 4,
+      Animated.spring(translateY, {
+        toValue: 0,
         useNativeDriver: true,
       }),
     ]).start();
 
-    // Timer para mostrar o botão
-    const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 2000);
-
+    const timer = setTimeout(() => setIsReady(true), 1500);
     return () => clearTimeout(timer);
   }, []);
 
-  const handleStartPress = () => {
-    // Animação de saída
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 0.8,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      navigation.replace("UserSelect");
-    });
-  };
+  const handleStartPress = () => navigation.replace("UserSelect");
 
   return (
     <View style={styles.container}>
+      {/* TOPO BRANCO COM A LOGO PNG */}
+      <View style={styles.topContainer}>
+        <Image
+          source={require("../../assets/Brain.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+      </View>
+
+      {/* FUNDO AZUL ESCURO */}
       <Animated.View
         style={[
-          styles.logoContainer,
+          styles.bottomContainer,
           {
             opacity: fadeAnim,
-            transform: [{ scale: scaleAnim }],
+            transform: [{ translateY }],
           },
         ]}
       >
-        <View style={styles.logo}>
-          <View style={styles.logoInner} />
-        </View>
-      </Animated.View>
-
-      <View style={styles.bottomContainer}>
         <Text style={styles.title}>Laços Digitais</Text>
+
         <Text style={styles.subtitle}>
-          Um elo entre informação,{"\n"}prevenção e cuidado.
+          Um elo entre informação, {"\n"}prevenção e cuidado.
         </Text>
 
-        <Animated.View
-          style={[
-            styles.buttonContainer,
-            {
-              opacity: isReady ? 1 : 0,
-            },
-          ]}
-        >
-          {isReady ? (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleStartPress}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.buttonText}>Vamos começar!</Text>
-            </TouchableOpacity>
-          ) : (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color={COLORS.white} />
-              <Text style={styles.loadingText}>Carregando...</Text>
-            </View>
-          )}
-        </Animated.View>
-      </View>
+        {isReady ? (
+          <TouchableOpacity style={styles.button} onPress={handleStartPress}>
+            <Text style={styles.buttonText}>Vamos começar!</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.white} />
+          </View>
+        )}
+
+        <Text style={styles.footer}>
+          © {new Date().getFullYear()} - Desenvolvido por DEVSANTX
+        </Text>
+      </Animated.View>
     </View>
   );
 }
@@ -108,81 +82,72 @@ export default function SplashScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.primary,
-    justifyContent: "space-between",
-    paddingVertical: 80,
-    paddingHorizontal: 32,
-  },
-  logoContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  logo: {
-    width: 128,
-    height: 128,
-    borderRadius: 64,
     backgroundColor: COLORS.white,
+  },
+
+  topContainer: {
+    flex: 0.9,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 10,
   },
-  logoInner: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 4,
-    borderColor: COLORS.primary,
+
+  logo: {
+    width: 160,
+    height: 160,
   },
+
   bottomContainer: {
+    flex: 0.8,
+    backgroundColor: COLORS.primary,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    paddingTop: 35,
+    paddingHorizontal: 45,
     alignItems: "center",
   },
+
   title: {
-    fontSize: 36,
+    fontSize: 42,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 12,
     textAlign: "center",
+    marginBottom: 15,
+    marginTop: 20,
   },
+
   subtitle: {
-    fontSize: 18,
+    fontSize: 22,
+    color: COLORS.white,
+    opacity: 0.95,
+    textAlign: "center",
+    marginTop: 25,
+    marginBottom: 35,
+  },
+
+  button: {
+    backgroundColor: COLORS.white,
+    paddingVertical: 16,
+    paddingHorizontal: 45,
+    borderRadius: 18,
+    marginTop: 20,
+  },
+
+  buttonText: {
+    color: COLORS.primary,
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+
+  loadingContainer: {
+    marginTop: 20,
+  },
+
+  footer: {
     color: COLORS.white,
     opacity: 0.9,
-    textAlign: "center",
-    marginBottom: 32,
-    lineHeight: 26,
-  },
-  buttonContainer: {
-    width: "100%",
-    minHeight: 60,
-    justifyContent: "center",
-  },
-  button: {
-    width: "100%",
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    paddingVertical: 16,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: COLORS.white,
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  loadingContainer: {
-    alignItems: "center",
-    gap: 8,
-  },
-  loadingText: {
-    color: COLORS.white,
     fontSize: 14,
-    opacity: 0.8,
+    marginTop: 40,
+    position: "absolute",
+    bottom: 25,
   },
 });
