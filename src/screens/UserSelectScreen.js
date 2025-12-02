@@ -1,7 +1,7 @@
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Card from "../components/common/Card";
-import Header from "../components/common/Header";
+import Header from "../components/common/Header"; // Importando o Header component
 import { COLORS } from "../constants/colors";
 
 export default function UserSelectScreen({ navigation }) {
@@ -45,15 +45,20 @@ export default function UserSelectScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Header showBack={false} />
+      {/* Usando o componente Header ajustado */}
+      <Header
+        showBack={true}
+        backTo="SplashScreen" // Navega para Splashscreen
+        showLogo={true} // Mostra a logo Brain.png
+      />
 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>Como podemos te ajudar?</Text>
-        <Text style={styles.subtitle}>
+        <Text style={styles.screenTitle}>Como podemos te ajudar?</Text>
+        <Text style={styles.screenSubtitle}>
           Escolha o seu tipo de usuário abaixo:
         </Text>
 
@@ -97,13 +102,14 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 32,
   },
-  title: {
+  screenTitle: {
     fontSize: 28,
     fontWeight: "bold",
     color: COLORS.primary,
     marginBottom: 8,
+    marginTop: 8, // Adicionei um pouco de espaço após o header
   },
-  subtitle: {
+  screenSubtitle: {
     fontSize: 16,
     color: COLORS.gray600,
     marginBottom: 24,
