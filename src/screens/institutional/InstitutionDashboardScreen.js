@@ -15,6 +15,7 @@ export default function InstitutionDashboardScreen({ navigation }) {
           Bem-vindo à área de instituições! Aqui você pode gerenciar conteúdos e
           parcerias.
         </Text>
+        <Text style={styles.subtitle}>OBS: Área ainda em desenvolvimento</Text>
 
         <Button
           title="Voltar"

@@ -1,13 +1,13 @@
 {
   "expo": {
     "name": "Laços Digitais",
-    "slug": "lacos-digitais-app",
+    "slug": "lacos-digitais",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/Logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/Splashscreen.png",
+      "image": "./assets/brain.svg",
       "resizeMode": "contain",
       "backgroundColor": "#192166"
     },
@@ -21,12 +21,18 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/Brain.png",
-        "backgroundColor": "#192166"
+        "backgroundColor": "#fff"
       },
       "package": "com.lacosdigitais.app"
     },
     "web": {
       "favicon": "./assets/Brain.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a407659b-7624-46f3-8e41-29f1cd225892"
+      }
+    },
+    "owner": "devsantx"
   }
 }

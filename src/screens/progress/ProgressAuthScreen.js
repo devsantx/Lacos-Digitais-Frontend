@@ -11,12 +11,14 @@ import Button from "../../components/common/Button";
 import FormInput from "../../components/common/FormInput";
 import Header from "../../components/common/Header";
 import { COLORS } from "../../constants/colors";
+import { useAuth } from "../../hooks/useAuth";
 import { useForm } from "../../hooks/useForm";
 import { validators } from "../../utils/validators";
 
 export default function ProgressAuthScreen({ navigation, route }) {
-  const mode = route.params?.mode || "login"; // 'login' ou 'register'
+  const mode = route.params?.mode || "login";
   const [showPassword, setShowPassword] = useState(false);
+  const { register: apiRegister, login: apiLogin } = useAuth();
 
   const initialValues = {
     username: "",
@@ -28,7 +30,6 @@ export default function ProgressAuthScreen({ navigation, route }) {
   const validateForm = (values, { setFieldError }) => {
     let hasError = false;
 
-    // Validar username
     const usernameError =
       validators.required(values.username, "Username") ||
       validators.username(values.username);
@@ -37,7 +38,6 @@ export default function ProgressAuthScreen({ navigation, route }) {
       hasError = true;
     }
 
-    // Validar password
     const passwordError =
       validators.required(values.password, "Senha") ||
       validators.minLength(values.password, 6, "Senha");
@@ -47,7 +47,6 @@ export default function ProgressAuthScreen({ navigation, route }) {
     }
 
     if (mode === "register") {
-      // Validar confirmPassword
       const matchError = validators.matchPassword(
         values.password,
         values.confirmPassword
@@ -68,14 +67,31 @@ export default function ProgressAuthScreen({ navigation, route }) {
 
   const { values, errors, loading, handleChange, resetForm, handleSubmit } =
     useForm(initialValues, async (values) => {
-      // Aqui você faria a chamada para a API
-      // const response = await api.post(mode === 'login' ? '/auth/login' : '/auth/register', values);
+      // Validar formulário
+      const isValid = validateForm(values, {
+        setFieldError: (field, error) => {
+          // Este setFieldError será chamado de dentro do handleSubmit
+        },
+      });
 
-      // Por enquanto, simulamos
-      return new Promise((resolve) => {
-        setTimeout(() => {
+      if (!isValid) {
+        throw new Error("Validação falhou");
+      }
+
+      try {
+        let result;
+
+        if (mode === "login") {
+          console.log("🔐 Tentando login...");
+          result = await apiLogin(values.username, values.password);
+        } else {
+          console.log("📝 Tentando registrar...");
+          result = await apiRegister(values.username, values.password);
+        }
+
+        if (result.success) {
           Alert.alert(
-            "Sucesso!",
+            "Sucesso! 🎉",
             mode === "login"
               ? "Bem-vindo de volta!"
               : "Conta criada com sucesso!",
@@ -89,9 +105,13 @@ export default function ProgressAuthScreen({ navigation, route }) {
               },
             ]
           );
-          resolve();
-        }, 1500);
-      });
+        } else {
+          Alert.alert("Erro", result.error || "Falha na autenticação");
+        }
+      } catch (error) {
+        console.error("❌ Erro:", error);
+        Alert.alert("Erro", error.message || "Algo deu errado");
+      }
     });
 
   return (
@@ -103,7 +123,6 @@ export default function ProgressAuthScreen({ navigation, route }) {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Título e Subtítulo */}
         <Text style={styles.title}>
           {mode === "login" ? "Entrar" : "Criar Conta"}
         </Text>
@@ -113,7 +132,6 @@ export default function ProgressAuthScreen({ navigation, route }) {
             : "Sua privacidade é garantida. Não coletamos dados pessoais."}
         </Text>
 
-        {/* Formulário */}
         <View style={styles.form}>
           <FormInput
             label="Username"
@@ -170,7 +188,6 @@ export default function ProgressAuthScreen({ navigation, route }) {
             <Text style={styles.errorText}>{errors.agreed}</Text>
           )}
 
-          {/* Botões */}
           <Button
             title={mode === "login" ? "Entrar" : "Criar Conta"}
             onPress={() => handleSubmit()}
@@ -184,7 +201,6 @@ export default function ProgressAuthScreen({ navigation, route }) {
             variant="outline"
           />
 
-          {/* Link para trocar de modo */}
           {mode === "login" ? (
             <TouchableOpacity
               onPress={() =>
