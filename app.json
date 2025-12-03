@@ -21,7 +21,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/Brain.png",
-        "backgroundColor": "#fff"
+        "backgroundColor": "#ffffff"
       },
       "package": "com.lacosdigitais.app"
     },

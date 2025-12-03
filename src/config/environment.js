@@ -5,8 +5,8 @@
 
 const ENV = {
   dev: {
-    apiUrl: "http://192.168.1.YOUR_IP:3000/api", // Seu IP local
-    appUrl: "http://localhost:19000", // Expo localhost
+    apiUrl: "http://192.168.1.YOUR_IP:3000/api", // Para testes locais
+    appUrl: "http://localhost:19000",
   },
   staging: {
     apiUrl: "https://lacos-digitais-api.onrender.com/api",
@@ -19,11 +19,12 @@ const ENV = {
 };
 
 const getEnvVars = () => {
-  // Em produção, sempre usar staging/prod
-  // Em desenvolvimento, usar dev
+  // Em desenvolvimento (Expo), usar a API hospedada no Render (staging)
   if (__DEV__) {
-    return ENV.staging; // Trocamos para staging por padrão (Render)
+    return ENV.staging;
   }
+
+  // Em produção (build final)
   return ENV.prod;
 };
 

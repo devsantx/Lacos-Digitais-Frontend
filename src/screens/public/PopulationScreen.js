@@ -141,7 +141,7 @@ export default function PopulationScreen({ navigation }) {
           <Button
             title="VER ARTIGOS CIENTÍFICOS"
             onPress={() => navigation.navigate("Articles")}
-            variant="secondary"
+            variant="primary"
           />
 
           <Button

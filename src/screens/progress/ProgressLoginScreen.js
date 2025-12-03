@@ -28,7 +28,11 @@ export default function ProgressLoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Header backTo="ProgressWelcome" />
+      <Header
+        showBack={true}
+        backTo="UserSelect" // Isso vai voltar para UserSelectScreen
+        showLogo={true} // Isso mostra a logo Brain.png
+      />
 
       <View style={styles.content}>
         <Text style={styles.title}>Entrar</Text>

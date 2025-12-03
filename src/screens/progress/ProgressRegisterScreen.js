@@ -1,37 +1,49 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import Header from '../../components/common/Header';
-import { COLORS } from '../../constants/colors';
+import React, { useState } from "react";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import Header from "../../components/common/Header";
+import { COLORS } from "../../constants/colors";
 
 export default function ProgressRegisterScreen({ navigation }) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [agreed, setAgreed] = useState(false);
 
   const handleRegister = () => {
     if (!username || !password || !confirmPassword) {
-      Alert.alert('Erro', 'Preencha todos os campos');
+      Alert.alert("Erro", "Preencha todos os campos");
       return;
     }
     if (password !== confirmPassword) {
-      Alert.alert('Erro', 'As senhas não coincidem');
+      Alert.alert("Erro", "As senhas não coincidem");
       return;
     }
     if (!agreed) {
-      Alert.alert('Erro', 'Você precisa concordar com os termos');
+      Alert.alert("Erro", "Você precisa concordar com os termos");
       return;
     }
 
     // Simular registro
-    Alert.alert('Sucesso', '✅ Conta criada! Bem-vindo!', [
-      { text: 'OK', onPress: () => navigation.navigate('ProgressDashboard') }
+    Alert.alert("Sucesso", "✅ Conta criada! Bem-vindo!", [
+      { text: "OK", onPress: () => navigation.navigate("ProgressDashboard") },
     ]);
   };
 
   return (
     <View style={styles.container}>
-      <Header backTo="ProgressWelcome" />
+      <Header
+        showBack={true}
+        backTo="UserSelect" // Isso vai voltar para UserSelectScreen
+        showLogo={true} // Isso mostra a logo Brain.png
+      />
 
       <ScrollView
         style={styles.scrollView}
@@ -85,7 +97,9 @@ export default function ProgressRegisterScreen({ navigation }) {
               {agreed && <Text style={styles.checkboxText}>✓</Text>}
             </View>
             <Text style={styles.checkboxLabel}>
-              Entendo que meus dados são <Text style={styles.bold}>totalmente anônimos</Text> e que posso deletar minha conta a qualquer momento.
+              Entendo que meus dados são{" "}
+              <Text style={styles.bold}>totalmente anônimos</Text> e que posso
+              deletar minha conta a qualquer momento.
             </Text>
           </TouchableOpacity>
 
@@ -120,7 +134,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: COLORS.primary,
     marginBottom: 8,
   },
@@ -137,7 +151,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: COLORS.gray700,
     marginBottom: 8,
   },
@@ -152,12 +166,12 @@ const styles = StyleSheet.create({
     color: COLORS.gray900,
   },
   checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: 24,
-    backgroundColor: '#EFF6FF',
+    backgroundColor: "#EFF6FF",
     borderWidth: 2,
-    borderColor: '#BFDBFE',
+    borderColor: "#BFDBFE",
     borderRadius: 12,
     padding: 16,
   },
@@ -168,8 +182,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     borderRadius: 6,
     marginRight: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   checkboxChecked: {
     backgroundColor: COLORS.primary,
@@ -177,7 +191,7 @@ const styles = StyleSheet.create({
   checkboxText: {
     color: COLORS.white,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   checkboxLabel: {
     flex: 1,
@@ -186,7 +200,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   bold: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   button: {
     backgroundColor: COLORS.progressPrimary,
@@ -197,8 +211,8 @@ const styles = StyleSheet.create({
   buttonText: {
     color: COLORS.white,
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   backButton: {
     paddingVertical: 12,
@@ -206,7 +220,7 @@ const styles = StyleSheet.create({
   backButtonText: {
     color: COLORS.gray600,
     fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
   },
 });

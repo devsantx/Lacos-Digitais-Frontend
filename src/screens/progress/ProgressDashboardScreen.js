@@ -12,11 +12,7 @@ import {
 import Card from "../../components/common/Card";
 import Header from "../../components/common/Header";
 import { COLORS } from "../../constants/colors";
-import {
-  clearAuthToken,
-  getUserAchievements,
-  getUserGoals,
-} from "../../services/api";
+import { clearAuthToken, getUserAchievements } from "../../services/api";
 
 export default function ProgressDashboardScreen({ navigation }) {
   const [userName, setUserName] = useState("Usuário");
@@ -44,18 +40,20 @@ export default function ProgressDashboardScreen({ navigation }) {
           console.log("👤 Usuário carregado:", parsed.username);
 
           // 2. Carregar metas do usuário
-          try {
-            const goalsResponse = await getUserGoals(parsed.id);
-            if (goalsResponse.data.success) {
-              setGoalsCount(goalsResponse.data.data?.length || 0);
-              console.log(
-                "🎯 Metas carregadas:",
-                goalsResponse.data.data?.length
-              );
-            }
-          } catch (error) {
-            console.warn("⚠️ Erro ao carregar metas:", error.message);
-          }
+          // try {
+          //   const goalsResponse = await getUserGoals(parsed.id);
+          //   if (goalsResponse.data.success) {
+          //     setGoalsCount(goalsResponse.data.data?.length || 0);
+          //     console.log(
+          //       "🎯 Metas carregadas:",
+          //       goalsResponse.data.data?.length
+          //     );
+          //   }
+          // } catch (error) {
+          //   console.warn("⚠️ Erro ao carregar metas:", error.message);
+          // }
+          setGoalsCount(0);
+          setAchievementsCount(0);
 
           // 3. Carregar conquistas do usuário
           try {
@@ -106,7 +104,11 @@ export default function ProgressDashboardScreen({ navigation }) {
   if (loading) {
     return (
       <View style={styles.container}>
-        <Header />
+        <Header
+          showBack={true}
+          backTo="UserSelect" // Isso vai voltar para UserSelectScreen
+          showLogo={true} // Isso mostra a logo Brain.png
+        />
         <View style={styles.centerContent}>
           <ActivityIndicator size="large" color={COLORS.progressPrimary} />
           <Text style={styles.loadingText}>Carregando seu perfil...</Text>
@@ -117,7 +119,11 @@ export default function ProgressDashboardScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Header />
+      <Header
+        showBack={true}
+        backTo="UserSelect" // Isso vai voltar para UserSelectScreen
+        showLogo={true} // Isso mostra a logo Brain.png
+      />
 
       <ScrollView
         style={styles.scrollView}
@@ -141,11 +147,8 @@ export default function ProgressDashboardScreen({ navigation }) {
           {/* Card: Metas Ativas */}
           <View style={styles.statCard}>
             <View style={styles.statHeader}>
-              <Ionicons
-                name="target-outline"
-                size={20}
-                color={COLORS.primary}
-              />
+              <Ionicons name="bullseye" size={20} color={COLORS.primary} />
+
               <Text style={styles.statLabel}>Metas Ativas</Text>
             </View>
             <Text style={styles.statValue}>{goalsCount}</Text>
@@ -178,8 +181,8 @@ export default function ProgressDashboardScreen({ navigation }) {
             <Text style={styles.primaryActionText}>Registrar Hoje</Text>
           </TouchableOpacity>
 
-          {/* Botão: Minhas Metas
-          <TouchableOpacity
+          {/* Botão: Minhas Metas */}
+          {/* <TouchableOpacity
             style={styles.secondaryAction}
             onPress={() => {
               console.log("📌 Tela de Metas ainda não implementada");

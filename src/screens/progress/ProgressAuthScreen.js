@@ -116,7 +116,11 @@ export default function ProgressAuthScreen({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <Header backTo="ProgressWelcome" />
+      <Header
+        showBack={true}
+        backTo="UserSelect" // Isso vai voltar para UserSelectScreen
+        showLogo={true} // Isso mostra a logo Brain.png
+      />
 
       <ScrollView
         style={styles.scrollView}

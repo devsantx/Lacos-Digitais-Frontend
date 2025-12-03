@@ -31,7 +31,11 @@ const featureList = [
 export default function ProgressWelcomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Header backTo="UserSelect" />
+      <Header
+        showBack={true}
+        backTo="UserSelect" // Isso vai voltar para UserSelectScreen
+        showLogo={true} // Isso mostra a logo Brain.png
+      />
 
       <ScrollView
         style={styles.scrollView}

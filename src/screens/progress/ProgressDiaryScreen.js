@@ -187,7 +187,11 @@ export default function ProgressDiaryScreen({ navigation }) {
   // ============================================================
   return (
     <View style={styles.container}>
-      <Header backTo="ProgressDashboard" />
+      <Header
+        showBack={true}
+        backTo="UserSelect" // Isso vai voltar para UserSelectScreen
+        showLogo={true} // Isso mostra a logo Brain.png
+      />
 
       <ScrollView
         style={styles.scrollView}

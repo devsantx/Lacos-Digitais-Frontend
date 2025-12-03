@@ -1,8 +1,15 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import Header from '../../components/common/Header';
-import { COLORS } from '../../constants/colors';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import {
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import Header from "../../components/common/Header";
+import { COLORS } from "../../constants/colors";
 
 const ContactCard = ({ name, phone, address, type }) => (
   <View style={styles.contactCard}>
@@ -28,7 +35,11 @@ const ContactCard = ({ name, phone, address, type }) => (
 export default function ContactsScreen() {
   return (
     <View style={styles.container}>
-      <Header />
+      <Header
+        showBack={true}
+        backTo="UserSelect" // Isso vai voltar para UserSelectScreen
+        showLogo={true} // Isso mostra a logo Brain.png
+      />
 
       <ScrollView
         style={styles.scrollView}
@@ -53,9 +64,12 @@ export default function ContactsScreen() {
         />
 
         <View style={styles.emergencyCard}>
-          <Text style={styles.emergencyTitle}>CVV - Centro de Valorização da Vida</Text>
+          <Text style={styles.emergencyTitle}>
+            CVV - Centro de Valorização da Vida
+          </Text>
           <Text style={styles.emergencyDescription}>
-            Apoio emocional e prevenção do suicídio. Atendimento 24h por telefone, email e chat.
+            Apoio emocional e prevenção do suicídio. Atendimento 24h por
+            telefone, email e chat.
           </Text>
           <View style={styles.emergencyPhone}>
             <Ionicons name="call" size={24} color={COLORS.info} />
@@ -82,7 +96,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: COLORS.primary,
     marginBottom: 8,
   },
@@ -96,7 +110,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 20,
     marginBottom: 16,
-    boxShadowColor: '#000',
+    boxShadowColor: "#000",
     boxShadowOffset: { width: 0, height: 2 },
     boxShadowOpacity: 0.1,
     boxShadowRadius: 4,
@@ -104,7 +118,7 @@ const styles = StyleSheet.create({
   },
   contactName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: COLORS.gray900,
     marginBottom: 8,
   },
@@ -117,8 +131,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   detailRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: 8,
   },
   detailText: {
@@ -130,16 +144,16 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   emergencyCard: {
-    backgroundColor: '#EFF6FF',
+    backgroundColor: "#EFF6FF",
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#BFDBFE',
+    borderColor: "#BFDBFE",
     padding: 20,
     marginTop: 8,
   },
   emergencyTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: COLORS.gray900,
     marginBottom: 8,
   },
@@ -150,13 +164,13 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   emergencyPhone: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   emergencyPhoneText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: COLORS.info,
   },
 });
