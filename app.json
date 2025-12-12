@@ -7,7 +7,7 @@
     "icon": "./assets/Logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/brain.svg",
+      "image": "./assets/Brain.png",
       "resizeMode": "contain",
       "backgroundColor": "#192166"
     },
@@ -33,6 +33,10 @@
         "projectId": "a407659b-7624-46f3-8e41-29f1cd225892"
       }
     },
-    "owner": "devsantx"
+    "owner": "devsantx",
+    "runtimeVersion": "2.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/a407659b-7624-46f3-8e41-29f1cd225892"
+    }
   }
 }
