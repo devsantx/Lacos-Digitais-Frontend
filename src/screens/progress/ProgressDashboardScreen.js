@@ -1,3 +1,4 @@
+// src/screens/progress/ProgressDashboardScreen.js
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
@@ -22,15 +23,11 @@ export default function ProgressDashboardScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
 
-  // ============================================================
-  // Carregar dados do usuário e estatísticas
-  // ============================================================
   useEffect(() => {
     const loadUserData = async () => {
       try {
         setLoading(true);
 
-        // 1. Obter dados do usuário armazenados localmente
         const userData = await AsyncStorage.getItem("userData");
         if (userData) {
           const parsed = JSON.parse(userData);
@@ -39,23 +36,9 @@ export default function ProgressDashboardScreen({ navigation }) {
 
           console.log("👤 Usuário carregado:", parsed.username);
 
-          // 2. Carregar metas do usuário
-          // try {
-          //   const goalsResponse = await getUserGoals(parsed.id);
-          //   if (goalsResponse.data.success) {
-          //     setGoalsCount(goalsResponse.data.data?.length || 0);
-          //     console.log(
-          //       "🎯 Metas carregadas:",
-          //       goalsResponse.data.data?.length
-          //     );
-          //   }
-          // } catch (error) {
-          //   console.warn("⚠️ Erro ao carregar metas:", error.message);
-          // }
           setGoalsCount(0);
           setAchievementsCount(0);
 
-          // 3. Carregar conquistas do usuário
           try {
             const achievementsResponse = await getUserAchievements(parsed.id);
             if (achievementsResponse.data.success) {
@@ -69,12 +52,9 @@ export default function ProgressDashboardScreen({ navigation }) {
             console.warn("⚠️ Erro ao carregar conquistas:", error.message);
           }
 
-          // 4. Calcular dias da jornada (simplificado)
-          // Você pode buscar do banco quando tiver endpoint pronto
-          setDaysCount(5); // Placeholder
+          setDaysCount(5);
         } else {
           console.warn("⚠️ Nenhum usuário encontrado");
-          // Redirecionar para login se não houver usuário
           navigation.replace("ProgressAuthScreen", { mode: "login" });
         }
       } catch (error) {
@@ -87,14 +67,10 @@ export default function ProgressDashboardScreen({ navigation }) {
     loadUserData();
   }, [navigation]);
 
-  // ============================================================
-  // Função de Logout
-  // ============================================================
   const handleLogout = async () => {
     try {
       console.log("👋 Fazendo logout...");
       await clearAuthToken();
-      // Voltar para UserSelectScreen
       navigation.replace("UserSelect");
     } catch (error) {
       console.error("❌ Erro ao fazer logout:", error);
@@ -104,11 +80,7 @@ export default function ProgressDashboardScreen({ navigation }) {
   if (loading) {
     return (
       <View style={styles.container}>
-        <Header
-          showBack={true}
-          backTo="UserSelect" // Isso vai voltar para UserSelectScreen
-          showLogo={true} // Isso mostra a logo Brain.png
-        />
+        <Header showBack={true} backTo="UserSelect" showLogo={true} />
         <View style={styles.centerContent}>
           <ActivityIndicator size="large" color={COLORS.progressPrimary} />
           <Text style={styles.loadingText}>Carregando seu perfil...</Text>
@@ -119,20 +91,14 @@ export default function ProgressDashboardScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Header
-        showBack={true}
-        backTo="UserSelect" // Isso vai voltar para UserSelectScreen
-        showLogo={true} // Isso mostra a logo Brain.png
-      />
+      <Header showBack={true} backTo="UserSelect" showLogo={true} />
 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* ============================================================
-            CARD DE BOAS-VINDAS
-            ============================================================ */}
+        {/* Card de Boas-vindas */}
         <View style={styles.welcomeCard}>
           <Text style={styles.welcomeTitle}>Olá, {userName}! 👋</Text>
           <Text style={styles.welcomeSubtitle}>
@@ -140,15 +106,12 @@ export default function ProgressDashboardScreen({ navigation }) {
           </Text>
         </View>
 
-        {/* ============================================================
-            CARDS DE ESTATÍSTICAS
-            ============================================================ */}
+        {/* Cards de Estatísticas */}
         <View style={styles.statsContainer}>
-          {/* Card: Metas Ativas */}
+          {/* Card: Metas Ativas - ÍCONE CORRIGIDO */}
           <View style={styles.statCard}>
             <View style={styles.statHeader}>
-              <Ionicons name="bullseye" size={20} color={COLORS.primary} />
-
+              <Ionicons name="flag-outline" size={20} color={COLORS.primary} />
               <Text style={styles.statLabel}>Metas Ativas</Text>
             </View>
             <Text style={styles.statValue}>{goalsCount}</Text>
@@ -168,11 +131,8 @@ export default function ProgressDashboardScreen({ navigation }) {
           </View>
         </View>
 
-        {/* ============================================================
-            AÇÕES PRINCIPAIS
-            ============================================================ */}
+        {/* Ações Principais */}
         <View style={styles.actionsContainer}>
-          {/* Botão: Registrar Hoje */}
           <TouchableOpacity
             style={styles.primaryAction}
             onPress={() => navigation.navigate("ProgressDiary")}
@@ -180,63 +140,41 @@ export default function ProgressDashboardScreen({ navigation }) {
             <Ionicons name="book-outline" size={20} color={COLORS.white} />
             <Text style={styles.primaryActionText}>Registrar Hoje</Text>
           </TouchableOpacity>
-
-          {/* Botão: Minhas Metas */}
-          {/* <TouchableOpacity
-            style={styles.secondaryAction}
-            onPress={() => {
-              console.log("📌 Tela de Metas ainda não implementada");
-              // TODO: Implementar tela de metas
-            }}
-          >
-            <Ionicons name="target-outline" size={20} color={COLORS.primary} />
-            <Text style={styles.secondaryActionText}>Minhas Metas</Text>
-          </TouchableOpacity> */}
         </View>
 
-        {/* ============================================================
-            SEÇÃO: ACESSO RÁPIDO
-            ============================================================ */}
+        {/* Seção: Acesso Rápido */}
         <Text style={styles.sectionTitle}>
           Acesso Rápido - AINDA EM DESENVOLVIMENTO
         </Text>
 
-        {/* Card: Autoavaliação */}
         <Card
           icon="bar-chart-outline"
           title="Autoavaliação"
           subtitle="Faça um questionário semanal"
           onPress={() => {
             console.log("📊 Autoavaliação clicada");
-            // TODO: Implementar autoavaliação
           }}
         />
 
-        {/* Card: Conquistas */}
         <Card
           icon="trophy-outline"
           title="Conquistas"
           subtitle="Veja suas badges desbloqueadas"
           onPress={() => {
             console.log("🏆 Conquistas clicadas");
-            // TODO: Implementar página de conquistas
           }}
         />
 
-        {/* Card: Pesquisas */}
         <Card
           icon="document-text-outline"
           title="Pesquisas"
           subtitle="Participe de estudos anônimos"
           onPress={() => {
             console.log("📋 Pesquisas clicadas");
-            // TODO: Implementar pesquisas
           }}
         />
 
-        {/* ============================================================
-            BOTÃO DE LOGOUT
-            ============================================================ */}
+        {/* Botão de Logout */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={20} color={COLORS.error} />
           <Text style={styles.logoutButtonText}>Fazer Logout</Text>
@@ -247,9 +185,6 @@ export default function ProgressDashboardScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  // ============================================================
-  // Containers principais
-  // ============================================================
   container: {
     flex: 1,
     backgroundColor: COLORS.gray50,
@@ -267,10 +202,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
-  // ============================================================
-  // Card de boas-vindas
-  // ============================================================
   welcomeCard: {
     backgroundColor: COLORS.progressPrimary,
     borderRadius: 16,
@@ -285,18 +216,14 @@ const styles = StyleSheet.create({
   welcomeTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: COLORS.white, // ✅ BRANCO (era antes a cor padrão)
+    color: COLORS.white,
     marginBottom: 8,
   },
   welcomeSubtitle: {
     fontSize: 15,
-    color: COLORS.white, // ✅ BRANCO
+    color: COLORS.white,
     opacity: 0.9,
   },
-
-  // ============================================================
-  // Cards de estatísticas
-  // ============================================================
   statsContainer: {
     flexDirection: "row",
     gap: 16,
@@ -304,7 +231,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: COLORS.white, // ✅ Fundo branco (era opaco)
+    backgroundColor: COLORS.white,
     borderRadius: 12,
     padding: 16,
     borderWidth: 2,
@@ -327,10 +254,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: COLORS.primary,
   },
-
-  // ============================================================
-  // Ações principais
-  // ============================================================
   actionsContainer: {
     gap: 12,
     marginBottom: 32,
@@ -350,39 +273,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  secondaryAction: {
-    backgroundColor: COLORS.white,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    paddingVertical: 16,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    elevation: 2,
-  },
-  secondaryActionText: {
-    color: COLORS.primary,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-
-  // ============================================================
-  // Título de seção
-  // ============================================================
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: COLORS.primary,
     marginBottom: 16,
   },
-
-  // ============================================================
-  // Botão de logout
-  // ============================================================
   logoutButton: {
-    backgroundColor: "#FEE2E2", // Vermelho bem claro
+    backgroundColor: "#FEE2E2",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -398,10 +296,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-
-  // ============================================================
-  // Textos de carregamento
-  // ============================================================
   loadingText: {
     marginTop: 12,
     fontSize: 16,

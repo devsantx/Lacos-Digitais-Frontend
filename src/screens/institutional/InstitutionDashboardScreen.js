@@ -1,3 +1,4 @@
+// src/screens/institutional/InstitutionDashboardScreen.js
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
@@ -13,6 +14,7 @@ import {
 import Card from "../../components/common/Card";
 import Header from "../../components/common/Header";
 import { COLORS } from "../../constants/colors";
+import { getInstitutionalStats } from "../../services/api";
 
 export default function InstitutionDashboardScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
@@ -35,15 +37,33 @@ export default function InstitutionDashboardScreen({ navigation }) {
       if (userData) {
         const parsed = JSON.parse(userData);
         setInstitutionData(parsed);
-      }
 
-      // TODO: Buscar estatísticas reais da API
-      // Por enquanto, dados mock
-      setStats({
-        articlesPublished: 12,
-        totalViews: 3450,
-        activeResearches: 3,
-      });
+        // Buscar estatísticas reais da API
+        try {
+          const response = await getInstitutionalStats();
+          if (response.data.success) {
+            setStats({
+              articlesPublished: response.data.data.overview.totalArticles,
+              totalViews: response.data.data.overview.totalViews,
+              activeResearches: 0, // Não implementado ainda
+            });
+            console.log("📊 Estatísticas carregadas:", response.data.data);
+          }
+        } catch (statsError) {
+          console.warn("⚠️ Erro ao carregar estatísticas:", statsError.message);
+          // Usar dados mock em caso de erro
+          setStats({
+            articlesPublished: 12,
+            totalViews: 3450,
+            activeResearches: 3,
+          });
+        }
+      } else {
+        // Se não houver dados, redirecionar para login
+        Alert.alert("Acesso não autorizado", "Faça login primeiro.", [
+          { text: "OK", onPress: () => navigation.replace("InstitutionLogin") },
+        ]);
+      }
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
       Alert.alert("Erro", "Não foi possível carregar os dados da instituição");
@@ -112,7 +132,9 @@ export default function InstitutionDashboardScreen({ navigation }) {
 
           <View style={styles.statCard}>
             <Ionicons name="eye-outline" size={24} color={COLORS.primary} />
-            <Text style={styles.statValue}>{stats.totalViews}</Text>
+            <Text style={styles.statValue}>
+              {stats.totalViews.toLocaleString()}
+            </Text>
             <Text style={styles.statLabel}>Visualizações</Text>
           </View>
 

@@ -1,3 +1,4 @@
+// src/screens/progress/ProgressDiaryScreen.js
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
@@ -13,22 +14,14 @@ import {
 } from "react-native";
 import Header from "../../components/common/Header";
 import { COLORS } from "../../constants/colors";
-import {
-  checkAndUnlockAchievements,
-  createDiaryEntry,
-} from "../../services/api";
 
 export default function ProgressDiaryScreen({ navigation }) {
-  // ============================================================
-  // Estados
-  // ============================================================
   const [hours, setHours] = useState("");
   const [selectedMood, setSelectedMood] = useState(null);
   const [triggers, setTriggers] = useState("");
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState(null);
 
-  // Array de moods
   const moods = [
     { emoji: "😊", label: "Feliz", value: "feliz" },
     { emoji: "😐", label: "Neutro", value: "neutro" },
@@ -36,9 +29,6 @@ export default function ProgressDiaryScreen({ navigation }) {
     { emoji: "😰", label: "Ansioso", value: "ansioso" },
   ];
 
-  // ============================================================
-  // Obter ID do usuário ao iniciar
-  // ============================================================
   useEffect(() => {
     const getUserId = async () => {
       try {
@@ -60,9 +50,6 @@ export default function ProgressDiaryScreen({ navigation }) {
     getUserId();
   }, [navigation]);
 
-  // ============================================================
-  // Salvar entrada no diário
-  // ============================================================
   const handleSave = async () => {
     // Validação de campos obrigatórios
     if (!hours || selectedMood === null) {
@@ -87,27 +74,50 @@ export default function ProgressDiaryScreen({ navigation }) {
 
     setLoading(true);
 
+    // Simulação de salvamento (REMOVER ESTA PARTE QUANDO O BACKEND ESTIVER FUNCIONANDO)
+    setTimeout(() => {
+      // Limpar os campos
+      setHours("");
+      setSelectedMood(null);
+      setTriggers("");
+      setLoading(false);
+
+      // Mostrar pop-up informativo
+      Alert.alert(
+        "Modo de Teste 🧪",
+        "O sistema de diário está em fase de testes. Sua entrada foi registrada localmente, mas não foi salva no servidor.\n\nEsta funcionalidade estará disponível em breve!",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              // Voltar para a tela ProgressDashboardScreen
+              navigation.navigate("ProgressDashboard");
+            },
+          },
+        ]
+      );
+    }, 1500);
+
+    // CÓDIGO ORIGINAL (COMENTADO - PARA USAR QUANDO O BACKEND ESTIVER FUNCIONANDO)
+    /*
     try {
       console.log("💾 Salvando entrada do diário...");
 
-      // Dados a serem enviados
-      const today = new Date().toISOString().split("T")[0]; // Formato: YYYY-MM-DD
+      const today = new Date().toISOString().split("T")[0];
       const moodLabel = moods[selectedMood].label;
 
-      // Chamar API
       const response = await createDiaryEntry(
         userId,
         today,
         parseInt(hours),
         moodLabel,
         triggers || "Sem informações",
-        [] // activities (pode expandir depois)
+        []
       );
 
       if (response.data.success) {
         console.log("✅ Entrada salva com sucesso!");
 
-        // Verificar conquistas desbloqueadas
         try {
           console.log("🔓 Verificando conquistas...");
           const achievementsResponse = await checkAndUnlockAchievements(userId);
@@ -128,12 +138,10 @@ export default function ProgressDiaryScreen({ navigation }) {
               {
                 text: "OK",
                 onPress: () => {
-                  // Limpar formulário
                   setHours("");
                   setSelectedMood(null);
                   setTriggers("");
-                  // Voltar para dashboard
-                  navigation.goBack();
+                  navigation.navigate("ProgressDashboard");
                 },
               },
             ]
@@ -144,7 +152,6 @@ export default function ProgressDiaryScreen({ navigation }) {
             achieveError.message
           );
 
-          // Mesmo sem conseguir verificar conquistas, a entrada foi salva
           Alert.alert("Sucesso! ✅", "Sua entrada foi salva com sucesso!", [
             {
               text: "OK",
@@ -152,7 +159,7 @@ export default function ProgressDiaryScreen({ navigation }) {
                 setHours("");
                 setSelectedMood(null);
                 setTriggers("");
-                navigation.goBack();
+                navigation.navigate("ProgressDashboard");
               },
             },
           ]);
@@ -180,18 +187,17 @@ export default function ProgressDiaryScreen({ navigation }) {
     } finally {
       setLoading(false);
     }
+    */
   };
 
-  // ============================================================
-  // Render
-  // ============================================================
+  const handleCancel = () => {
+    // Voltar para ProgressDashboardScreen
+    navigation.navigate("ProgressDashboard");
+  };
+
   return (
     <View style={styles.container}>
-      <Header
-        showBack={true}
-        backTo="UserSelect" // Isso vai voltar para UserSelectScreen
-        showLogo={true} // Isso mostra a logo Brain.png
-      />
+      <Header showBack={true} backTo="ProgressDashboard" showLogo={true} />
 
       <ScrollView
         style={styles.scrollView}
@@ -203,10 +209,16 @@ export default function ProgressDiaryScreen({ navigation }) {
           Quanto tempo você passou na internet hoje?
         </Text>
 
+        {/* Banner de Modo de Teste */}
+        <View style={styles.testBanner}>
+          <Ionicons name="beaker-outline" size={20} color="#D97706" />
+          <Text style={styles.testBannerText}>
+            MODO DE TESTE - Esta funcionalidade está em desenvolvimento
+          </Text>
+        </View>
+
         <View style={styles.form}>
-          {/* ============================================================
-              CAMPO: Horas na Internet
-              ============================================================ */}
+          {/* Campo: Horas na Internet */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>
               Quantas horas você usou internet hoje?
@@ -219,16 +231,14 @@ export default function ProgressDiaryScreen({ navigation }) {
                 onChangeText={setHours}
                 keyboardType="number-pad"
                 editable={!loading}
-                maxLength="2"
+                maxLength={2}
               />
               <Text style={styles.hoursLabel}>horas</Text>
             </View>
             <Text style={styles.hint}>Digite um número de 0 a 24</Text>
           </View>
 
-          {/* ============================================================
-              CAMPO: Humor
-              ============================================================ */}
+          {/* Campo: Humor */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Como você se sentiu?</Text>
             <View style={styles.moodsContainer}>
@@ -250,9 +260,7 @@ export default function ProgressDiaryScreen({ navigation }) {
             </View>
           </View>
 
-          {/* ============================================================
-              CAMPO: Gatilhos
-              ============================================================ */}
+          {/* Campo: Gatilhos */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>O que te levou a usar tanto/pouco?</Text>
             <Text style={styles.hint}>
@@ -270,9 +278,7 @@ export default function ProgressDiaryScreen({ navigation }) {
             />
           </View>
 
-          {/* ============================================================
-              BOTÃO: Salvar
-              ============================================================ */}
+          {/* Botão: Salvar (Modo Teste) */}
           <TouchableOpacity
             style={[styles.saveButton, loading && styles.saveButtonDisabled]}
             onPress={handleSave}
@@ -282,41 +288,39 @@ export default function ProgressDiaryScreen({ navigation }) {
             {loading ? (
               <>
                 <ActivityIndicator size="small" color={COLORS.white} />
-                <Text style={styles.saveButtonText}>Salvando...</Text>
+                <Text style={styles.saveButtonText}>
+                  Salvando em modo teste...
+                </Text>
               </>
             ) : (
               <>
                 <Ionicons
-                  name="checkmark-circle-outline"
+                  name="beaker-outline"
                   size={20}
                   color={COLORS.white}
                 />
-                <Text style={styles.saveButtonText}>Salvar Entrada</Text>
+                <Text style={styles.saveButtonText}>Salvar (Modo Teste)</Text>
               </>
             )}
           </TouchableOpacity>
 
-          {/* ============================================================
-              BOTÃO: Voltar
-              ============================================================ */}
+          {/* Botão: Cancelar */}
           <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
+            style={styles.cancelButton}
+            onPress={handleCancel}
             disabled={loading}
             activeOpacity={0.8}
           >
             <Ionicons
-              name="arrow-back-outline"
+              name="close-circle-outline"
               size={20}
-              color={COLORS.primary}
+              color={COLORS.gray600}
             />
-            <Text style={styles.backButtonText}>Voltar</Text>
+            <Text style={styles.cancelButtonText}>Cancelar</Text>
           </TouchableOpacity>
         </View>
 
-        {/* ============================================================
-            INFO: Dica de preenchimento
-            ============================================================ */}
+        {/* Info Card */}
         <View style={styles.infoCard}>
           <Ionicons
             name="information-circle-outline"
@@ -324,8 +328,18 @@ export default function ProgressDiaryScreen({ navigation }) {
             color={COLORS.info}
           />
           <Text style={styles.infoText}>
-            Preencha este diário diariamente para acompanhar seu progresso e
-            desbloquear conquistas! 📊
+            ⚠️ Esta funcionalidade está em fase de testes. Suas entradas serão
+            salvas apenas localmente por enquanto. O sistema completo estará
+            disponível em breve!
+          </Text>
+        </View>
+
+        {/* Dica para desenvolvedores */}
+        <View style={styles.devNote}>
+          <Ionicons name="code-outline" size={16} color={COLORS.gray500} />
+          <Text style={styles.devNoteText}>
+            Para habilitar o salvamento real no servidor, remova a simulação
+            (setTimeout) na função handleSave() e descomente o código original.
           </Text>
         </View>
       </ScrollView>
@@ -334,9 +348,6 @@ export default function ProgressDiaryScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  // ============================================================
-  // Containers principais
-  // ============================================================
   container: {
     flex: 1,
     backgroundColor: COLORS.gray50,
@@ -349,10 +360,6 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 32,
   },
-
-  // ============================================================
-  // Título e subtítulo
-  // ============================================================
   title: {
     fontSize: 28,
     fontWeight: "bold",
@@ -362,20 +369,29 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 15,
     color: COLORS.gray600,
-    marginBottom: 24,
+    marginBottom: 16,
     lineHeight: 22,
   },
-
-  // ============================================================
-  // Formulário
-  // ============================================================
+  testBanner: {
+    backgroundColor: "#FEF3C7",
+    borderWidth: 1,
+    borderColor: "#FBBF24",
+    borderRadius: 8,
+    padding: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 24,
+  },
+  testBannerText: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#92400E",
+  },
   form: {
     marginTop: 8,
   },
-
-  // ============================================================
-  // Grupo de input
-  // ============================================================
   inputGroup: {
     marginBottom: 24,
   },
@@ -391,10 +407,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontStyle: "italic",
   },
-
-  // ============================================================
-  // Input de horas
-  // ============================================================
   hoursInputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -419,10 +431,6 @@ const styles = StyleSheet.create({
     color: COLORS.gray700,
     paddingVertical: 12,
   },
-
-  // ============================================================
-  // Input de texto
-  // ============================================================
   input: {
     backgroundColor: COLORS.white,
     borderWidth: 2,
@@ -437,10 +445,6 @@ const styles = StyleSheet.create({
     height: 100,
     textAlignVertical: "top",
   },
-
-  // ============================================================
-  // Moods (humores)
-  // ============================================================
   moodsContainer: {
     flexDirection: "row",
     gap: 10,
@@ -469,12 +473,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: COLORS.gray700,
   },
-
-  // ============================================================
-  // Botões
-  // ============================================================
   saveButton: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: "#D97706", // Cor laranja para modo teste
     paddingVertical: 16,
     borderRadius: 12,
     marginTop: 12,
@@ -492,8 +492,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-
-  backButton: {
+  cancelButton: {
     backgroundColor: COLORS.white,
     paddingVertical: 14,
     borderRadius: 12,
@@ -503,17 +502,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 8,
     borderWidth: 2,
-    borderColor: COLORS.primary,
+    borderColor: COLORS.gray300,
   },
-  backButtonText: {
-    color: COLORS.primary,
+  cancelButtonText: {
+    color: COLORS.gray600,
     fontSize: 16,
     fontWeight: "bold",
   },
-
-  // ============================================================
-  // Info card
-  // ============================================================
   infoCard: {
     backgroundColor: "#EFF6FF",
     borderRadius: 12,
@@ -529,5 +524,23 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.gray700,
     lineHeight: 20,
+  },
+  devNote: {
+    backgroundColor: "#F3F4F6",
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 16,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+    borderWidth: 1,
+    borderColor: COLORS.gray200,
+  },
+  devNoteText: {
+    flex: 1,
+    fontSize: 11,
+    color: COLORS.gray600,
+    fontFamily: "monospace",
+    lineHeight: 16,
   },
 });

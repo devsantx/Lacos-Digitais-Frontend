@@ -1,5 +1,7 @@
+// src/screens/institutional/InstitutionUploadArticleScreen.js
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -30,6 +32,19 @@ export default function InstitutionUploadArticleScreen({ navigation }) {
   const [articleUrl, setArticleUrl] = useState("");
   const [keywords, setKeywords] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Verificar login
+    const checkLogin = async () => {
+      const institutionData = await AsyncStorage.getItem("institutionData");
+      if (!institutionData) {
+        Alert.alert("Acesso não autorizado", "Faça login primeiro.", [
+          { text: "OK", onPress: () => navigation.replace("InstitutionLogin") },
+        ]);
+      }
+    };
+    checkLogin();
+  }, []);
 
   const handleSubmit = async () => {
     // Validações
@@ -113,6 +128,8 @@ export default function InstitutionUploadArticleScreen({ navigation }) {
       if (error.response?.status === 401) {
         errorMessage = "Sessão expirada. Faça login novamente.";
         navigation.replace("InstitutionLogin");
+      } else if (error.response?.status === 400) {
+        errorMessage = error.response.data.error || "Dados inválidos";
       } else if (error.response?.data?.error) {
         errorMessage = error.response.data.error;
       } else if (error.message) {

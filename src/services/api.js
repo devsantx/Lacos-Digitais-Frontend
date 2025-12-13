@@ -88,6 +88,7 @@ export const submitQuizResponse = (quizId, responses, score) => {
 // ============================================================
 // PROGRESSO / DIÁRIO
 // ============================================================
+// src/services/api.js - Ajuste a função createDiaryEntry:
 export const createDiaryEntry = (
   userId,
   date,
@@ -95,8 +96,8 @@ export const createDiaryEntry = (
   mood,
   triggers,
   activities
-) =>
-  api.post("/diary-entries", {
+) => {
+  console.log("📤 Enviando para /diary-entries:", {
     user_id: userId,
     date,
     time_online: timeOnline,
@@ -105,7 +106,19 @@ export const createDiaryEntry = (
     activities,
   });
 
-export const getDiaryEntries = (userId) => api.get(`/diary-entries/${userId}`);
+  return api.post("/diary-entries", {
+    user_id: userId,
+    date,
+    time_online: timeOnline,
+    mood,
+    triggers,
+    activities,
+  });
+};
+
+// E também atualize a função getDiaryEntries:
+export const getDiaryEntries = (userId) =>
+  api.get(`/diary-entries/user/${userId}`);
 
 // METAS — Desativado temporariamente
 export const createGoal = () => Promise.resolve({ data: { success: true } });
@@ -171,6 +184,32 @@ export const institutionalLogin = (matricula, senha) => {
   console.log("🔐 Login institucional:", matricula);
   return api.post("/institutional/login", { matricula, senha });
 };
+
+api.interceptors.request.use(
+  async (config) => {
+    // Verificar se é rota institucional
+    const isInstitutionalRoute =
+      config.url.includes("/institutional/") ||
+      config.url.includes("/institutional/");
+
+    if (isInstitutionalRoute) {
+      // Usar token institucional
+      const token = await AsyncStorage.getItem("institutionToken");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+        console.log("🔑 Usando token institucional");
+      }
+    } else {
+      // Usar token normal do usuário
+      const token = await AsyncStorage.getItem("authToken");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 // ============================================================
 // ARTIGOS

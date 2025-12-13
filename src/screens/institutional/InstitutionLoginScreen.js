@@ -1,19 +1,24 @@
+// src/screens/institutional/InstitutionLoginScreen.js - VERSÃO 100% MOCK
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
-import Button from "../../components/common/Button";
+import {
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import FormInput from "../../components/common/FormInput";
 import Header from "../../components/common/Header";
 import { COLORS } from "../../constants/colors";
-import { institutionalLogin, saveInstitutionalToken } from "../../services/api";
 
 export default function InstitutionLoginScreen({ navigation }) {
-  const [matricula, setMatricula] = useState("");
-  const [senha, setSenha] = useState("");
+  const [matricula, setMatricula] = useState("20231234");
+  const [senha, setSenha] = useState("teste123");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
-    // Validações
+  const handleMockLogin = async () => {
     if (!matricula || !senha) {
       Alert.alert("Erro", "Preencha todos os campos");
       return;
@@ -22,46 +27,36 @@ export default function InstitutionLoginScreen({ navigation }) {
     setLoading(true);
 
     try {
-      console.log("🔄 Tentando login institucional...");
+      console.log("🧪 Executando login MOCK...");
 
-      const response = await institutionalLogin(matricula, senha);
+      // Simular delay de rede
+      await new Promise((resolve) => setTimeout(resolve, 1200));
 
-      if (response.data.success) {
-        const { token, institution } = response.data;
+      // Dados mock da instituição
+      const mockInstitution = {
+        id: 1,
+        nome: "UNINASSAU - Instituição de Teste",
+        matricula: matricula,
+        email: "teste@uninassau.edu.br",
+        telefone: "(81) 99999-9999",
+        ativo: true,
+      };
 
-        // Salvar token
-        await saveInstitutionalToken(token);
+      // Salvar no AsyncStorage
+      await AsyncStorage.setItem(
+        "institutionData",
+        JSON.stringify(mockInstitution)
+      );
+      await AsyncStorage.setItem("institutionToken", "mock-token-12345");
+      await AsyncStorage.setItem("institutionMode", "mock");
 
-        // Salvar dados da instituição
-        await AsyncStorage.setItem(
-          "institutionData",
-          JSON.stringify(institution)
-        );
+      console.log("✅ Login mock concluído!");
 
-        console.log("✅ Login bem-sucedido!");
-
-        Alert.alert("Sucesso", `Bem-vindo, ${institution.nome}!`, [
-          {
-            text: "OK",
-            onPress: () => navigation.replace("InstitutionDashboard"),
-          },
-        ]);
-      }
+      // Navegar diretamente para o dashboard
+      navigation.replace("InstitutionDashboard");
     } catch (error) {
-      console.error("❌ Erro no login:", error);
-
-      let errorMessage = "Falha ao fazer login";
-
-      if (error.response?.status === 401) {
-        errorMessage =
-          error.response.data.error || "Matrícula ou senha incorretos";
-      } else if (error.response?.data?.error) {
-        errorMessage = error.response.data.error;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      Alert.alert("Erro", errorMessage);
+      console.error("❌ Erro no login mock:", error);
+      Alert.alert("Erro", "Falha no login simulado");
     } finally {
       setLoading(false);
     }
@@ -74,54 +69,104 @@ export default function InstitutionLoginScreen({ navigation }) {
       <View style={styles.content}>
         <Text style={styles.title}>Acesso Institucional</Text>
         <Text style={styles.subtitle}>
-          Faça login com sua matrícula e senha institucional
+          Modo de Desenvolvimento (100% Frontend)
         </Text>
 
-        <View style={styles.infoCard}>
+        {/* Banner informativo */}
+        <View style={styles.infoBanner}>
+          <Text style={styles.infoTitle}>🧪 SISTEMA EM MODO DE TESTE</Text>
           <Text style={styles.infoText}>
-            📌 Este acesso é exclusivo para instituições parceiras cadastradas.
+            Todas as funcionalidades rodam localmente no seu dispositivo.
+            Nenhuma conexão com backend é necessária.
           </Text>
         </View>
 
         <View style={styles.form}>
           <FormInput
-            label="Matrícula"
-            placeholder="20231234"
+            label="Matrícula (qualquer valor funciona)"
+            placeholder="Ex: 20231234"
             value={matricula}
             onChangeText={setMatricula}
             keyboardType="numeric"
-            required
+            editable={!loading}
           />
 
           <FormInput
-            label="Senha"
-            placeholder="••••••••"
+            label="Senha (qualquer valor funciona)"
+            placeholder="Ex: teste123"
             value={senha}
             onChangeText={setSenha}
             secureTextEntry
-            required
+            editable={!loading}
           />
 
-          <Button
-            title="Entrar"
-            onPress={handleLogin}
-            loading={loading}
-            variant="primary"
-          />
-
-          <Button
-            title="Voltar"
-            onPress={() => navigation.goBack()}
-            variant="outline"
+          {/* Botão de login */}
+          <TouchableOpacity
+            style={[styles.loginButton, loading && styles.buttonDisabled]}
+            onPress={handleMockLogin}
             disabled={loading}
-          />
+          >
+            {loading ? (
+              <>
+                <ActivityIndicator size="small" color={COLORS.white} />
+                <Text style={styles.loginButtonText}> Processando...</Text>
+              </>
+            ) : (
+              <Text style={styles.loginButtonText}>Entrar no Modo Teste</Text>
+            )}
+          </TouchableOpacity>
+
+          {/* Botão de acesso rápido (com credenciais pré-preenchidas) */}
+          <TouchableOpacity
+            style={styles.quickButton}
+            onPress={() => {
+              setMatricula("20231234");
+              setSenha("teste123");
+            }}
+          >
+            <Text style={styles.quickButtonText}>
+              🔄 Usar Credenciais de Teste
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.backButton, loading && styles.buttonDisabled]}
+            onPress={() => navigation.goBack()}
+            disabled={loading}
+          >
+            <Text style={styles.backButtonText}>← Voltar para Seleção</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Credenciais de teste */}
-        <View style={styles.testCard}>
-          <Text style={styles.testTitle}>🧪 Dados de Teste</Text>
-          <Text style={styles.testText}>Matrícula: 20231234</Text>
-          <Text style={styles.testText}>Senha: teste123</Text>
+        {/* Instruções */}
+        <View style={styles.instructions}>
+          <Text style={styles.sectionTitle}>Como funciona:</Text>
+          <View style={styles.step}>
+            <Text style={styles.stepNumber}>1</Text>
+            <Text style={styles.stepText}>
+              Preencha qualquer matrícula/senha (ou use o botão acima)
+            </Text>
+          </View>
+          <View style={styles.step}>
+            <Text style={styles.stepNumber}>2</Text>
+            <Text style={styles.stepText}>
+              Clique em "Entrar no Modo Teste"
+            </Text>
+          </View>
+          <View style={styles.step}>
+            <Text style={styles.stepNumber}>3</Text>
+            <Text style={styles.stepText}>
+              Acesse todas as funcionalidades localmente
+            </Text>
+          </View>
+
+          <View style={styles.note}>
+            <Text style={styles.noteText}>
+              💡 <Text style={styles.noteBold}>Nota:</Text> Nenhum dado é
+              enviado para servidores externos. Todo o sistema funciona no seu
+              dispositivo.
+            </Text>
+          </View>
         </View>
       </View>
     </View>
@@ -135,53 +180,141 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    paddingHorizontal: 24,
+    paddingVertical: 20,
     justifyContent: "center",
-    paddingHorizontal: 32,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
     color: COLORS.primary,
     marginBottom: 8,
+    textAlign: "center",
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 16,
     color: COLORS.gray600,
     marginBottom: 24,
+    textAlign: "center",
   },
-  infoCard: {
-    backgroundColor: "#EFF6FF",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
-    borderWidth: 2,
-    borderColor: "#BFDBFE",
-  },
-  infoText: {
-    color: COLORS.gray700,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  form: {
-    marginTop: 8,
-  },
-  testCard: {
+  infoBanner: {
     backgroundColor: "#FEF3C7",
     borderRadius: 12,
     padding: 16,
-    marginTop: 24,
+    marginBottom: 24,
     borderWidth: 2,
-    borderColor: "#FDE68A",
+    borderColor: "#FBBF24",
   },
-  testTitle: {
-    fontSize: 14,
+  infoTitle: {
+    fontSize: 16,
     fontWeight: "bold",
-    color: COLORS.gray900,
+    color: "#92400E",
     marginBottom: 8,
+    textAlign: "center",
   },
-  testText: {
-    fontSize: 13,
+  infoText: {
+    fontSize: 14,
+    color: "#92400E",
+    textAlign: "center",
+    lineHeight: 20,
+  },
+  form: {
+    marginBottom: 32,
+  },
+  loginButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: "center",
+    marginBottom: 12,
+    flexDirection: "row",
+    justifyContent: "center",
+    elevation: 3,
+  },
+  quickButton: {
+    backgroundColor: "#E0F2FE",
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: "#7DD3FC",
+  },
+  backButton: {
+    backgroundColor: COLORS.white,
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: COLORS.gray300,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  loginButtonText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  quickButtonText: {
+    color: "#0C4A6E",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  backButtonText: {
     color: COLORS.gray700,
-    marginBottom: 4,
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  instructions: {
+    backgroundColor: "#F8FAFC",
+    borderRadius: 12,
+    padding: 20,
+    borderWidth: 2,
+    borderColor: "#E2E8F0",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: COLORS.primary,
+    marginBottom: 16,
+  },
+  step: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: 12,
+  },
+  stepNumber: {
+    width: 24,
+    height: 24,
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+    color: COLORS.white,
+    textAlign: "center",
+    lineHeight: 24,
+    fontWeight: "bold",
+    marginRight: 12,
+  },
+  stepText: {
+    flex: 1,
+    fontSize: 14,
+    color: COLORS.gray700,
+    lineHeight: 20,
+  },
+  note: {
+    backgroundColor: "#F0F9FF",
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: "#0EA5E9",
+  },
+  noteText: {
+    fontSize: 13,
+    color: "#0369A1",
+    lineHeight: 18,
+  },
+  noteBold: {
+    fontWeight: "bold",
   },
 });
