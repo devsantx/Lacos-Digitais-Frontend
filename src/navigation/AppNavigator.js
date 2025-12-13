@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 
 // Screens - Public
-import SplashScreen from "../screens/Splashscreen"; // Certifique-se que está assim
+import SplashScreen from "../screens/Splashscreen";
 import UserSelectScreen from "../screens/UserSelectScreen";
 import ArticlesScreen from "../screens/public/ArticlesScreen";
 import ContactsScreen from "../screens/public/ContactsScreen";
@@ -17,8 +17,11 @@ import ProgressDiaryScreen from "../screens/progress/ProgressDiaryScreen";
 import ProgressWelcomeScreen from "../screens/progress/ProgressWelcomeScreen";
 
 // Screens - Institutional
+// import InstitutionArticlesListScreen from "../screens/institutional/InstitutionArticlesListScreen";
 import InstitutionDashboardScreen from "../screens/institutional/InstitutionDashboardScreen";
 import InstitutionLoginScreen from "../screens/institutional/InstitutionLoginScreen";
+import InstitutionStatsScreen from "../screens/institutional/InstitutionStatsScreen";
+// import InstitutionUploadArticleScreen from "../screens/institutional/InstitutionUploadArticleScreen";
 
 const Stack = createStackNavigator();
 
@@ -41,6 +44,12 @@ const navigationScreens = [
   // Institutional Screens
   { name: "InstitutionLogin", component: InstitutionLoginScreen },
   { name: "InstitutionDashboard", component: InstitutionDashboardScreen },
+  // {
+  //   name: "InstitutionUploadArticle",
+  //   component: InstitutionUploadArticleScreen,
+  // },
+  // { name: "InstitutionArticlesList", component: InstitutionArticlesListScreen },
+  { name: "InstitutionStats", component: InstitutionStatsScreen },
 ];
 
 export default function AppNavigator() {

@@ -160,3 +160,89 @@ export const clearAuthToken = async () => {
 };
 
 export default api;
+
+// ============================================================
+// FUNÇÕES INSTITUCIONAIS
+// Adicione estas funções ao seu arquivo src/services/api.js
+// ============================================================
+
+// Login institucional
+export const institutionalLogin = (matricula, senha) => {
+  console.log("🔐 Login institucional:", matricula);
+  return api.post("/institutional/login", { matricula, senha });
+};
+
+// ============================================================
+// ARTIGOS
+// ============================================================
+
+// Criar artigo
+export const createInstitutionalArticle = (articleData) => {
+  console.log("📝 Criando artigo:", articleData.title);
+  return api.post("/institutional/articles", articleData);
+};
+
+// Listar artigos da instituição
+export const getInstitutionalArticles = (status = null) => {
+  const params = status ? { status } : {};
+  return api.get("/institutional/articles", { params });
+};
+
+// Buscar artigo específico
+export const getInstitutionalArticleById = (articleId) => {
+  return api.get(`/institutional/articles/${articleId}`);
+};
+
+// Atualizar artigo
+export const updateInstitutionalArticle = (articleId, articleData) => {
+  console.log("✏️ Atualizando artigo:", articleId);
+  return api.put(`/institutional/articles/${articleId}`, articleData);
+};
+
+// Deletar artigo
+export const deleteInstitutionalArticle = (articleId) => {
+  console.log("🗑️ Deletando artigo:", articleId);
+  return api.delete(`/institutional/articles/${articleId}`);
+};
+
+// ============================================================
+// ESTATÍSTICAS
+// ============================================================
+
+// Buscar estatísticas da instituição
+export const getInstitutionalStats = () => {
+  return api.get("/institutional/stats");
+};
+
+// ============================================================
+// ARTIGOS PÚBLICOS (sem auth)
+// ============================================================
+
+// Listar artigos aprovados para área pública
+export const getPublicInstitutionalArticles = (category = null, limit = 50) => {
+  const params = { limit };
+  if (category) params.category = category;
+  return api.get("/institutional/articles/public", { params });
+};
+
+// Incrementar visualização
+export const incrementArticleView = (articleId) => {
+  return api.post(`/institutional/articles/${articleId}/view`);
+};
+
+// ============================================================
+// TOKEN HELPERS INSTITUCIONAIS
+// ============================================================
+
+export const saveInstitutionalToken = async (token) => {
+  await AsyncStorage.setItem("institutionToken", token);
+};
+
+export const getInstitutionalToken = async () => {
+  return await AsyncStorage.getItem("institutionToken");
+};
+
+export const clearInstitutionalToken = async () => {
+  await AsyncStorage.removeItem("institutionToken");
+  await AsyncStorage.removeItem("institutionData");
+};
